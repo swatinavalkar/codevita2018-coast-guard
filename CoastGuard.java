@@ -14,6 +14,7 @@ public class CoastGuard {
 				for(int i = 0; i < noOfBoats; i++){
 					if(!(stepsSet.add(Math.abs(boats[i][0] - a) + Math.abs(boats[i][1] - b)))){	//if duplicate entries, add() would return false
 						uncontSq++;
+						break;
 					}
 				}
 			}
