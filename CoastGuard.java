@@ -10,14 +10,11 @@ public class CoastGuard {
 		int uncontSq = 0;	//no. of uncontrolled square grids
 		for(int a = 0; a < columns; a++) {	//a is the left component of the grid number
 			for(int b = 0; b < rows; b++) {	//b is the right component of the grid number
-			ArrayList<Integer> steps = new ArrayList<Integer>();	//stores the list of steps required by each boat for one grid
+			HashSet<Integer> stepsSet = new HashSet<Integer>();	//stores the list of steps required by each boat to reach (a,b) grid without duplicates
 				for(int i = 0; i < noOfBoats; i++){
-					steps.add(Math.abs(boats[i][0] - a) + Math.abs(boats[i][1] - b));	//steps required by the boats to reach (a,b) grid
-				}
-				HashSet<Integer> stepsSet = new HashSet<Integer>();
-				stepsSet.addAll(steps);	//convert steps list into a set as set will not keep duplicates
-				if(steps.size() != stepsSet.size()){	//compare the no. of elements in list and in set, if duplicate entries, the size would not match
-					uncontSq++;
+					if(!(stepsSet.add(Math.abs(boats[i][0] - a) + Math.abs(boats[i][1] - b)))){	//if duplicate entries, add() would return false
+						uncontSq++;
+					}
 				}
 			}
 		}
