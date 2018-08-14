@@ -1,29 +1,23 @@
 import java.util.*;
-public class CoastGuard2 {
-	int M;	//no. of rows
-	int N;	//no. of columns
-	int k;	//no. of boats
-	int uncontSq;	//no. of uncontrolled square grids
-	int[][] positions;	//array of boat positions
-	int[][] boats;	//array of all boat step information
-	int grids;	//no. of grids (M*N)
+public class CoastGuard {
+	int rows;
+	int columns;
+	int noOfBoats;
+	int[][] boats;	//array of boat positins
+	int grids;	//no. of grids (rows*columns)
 	
 	public void calUncontSq() {
-		boats = new int[k][grids];
-		for(int i = 0, j = 0; i < k; i++){	//make k arrays of boat individual boat steps in boats' array
-			for(int a = 0; a < N; a++) {
-				for(int b = 0; b < M; b++, j++) {
-					boats[i][j] = Math.abs(positions[i][0] - a) + Math.abs(positions[i][1] - b);	//steps required by the boat to reach every grid
+		int uncontSq = 0;	//no. of uncontrolled square grids
+		for(int a = 0; a < columns; a++) {	//a is the left component of the grid number
+			for(int b = 0; b < rows; b++) {	//b is the right component of the grid number
+			ArrayList<Integer> steps = new ArrayList<Integer>();	//stores the list of steps required by each boat for one grid
+				for(int i = 0; i < noOfBoats; i++){
+					steps.add(Math.abs(boats[i][0] - a) + Math.abs(boats[i][1] - b));	//steps required by the boats to reach (a,b) grid
 				}
-			}
-			j = 0;
-		}
-		uncontSq = 0;
-		for(int i = 0; i < (grids); i++){	//compare step values of all boats in same grids
-			for(int b = 0; b < k-1; b++){
-				if(boats[b][i] == boats[b+1][i]){
+				HashSet<Integer> stepsSet = new HashSet<Integer>();
+				stepsSet.addAll(steps);	//convert steps list into a set as set will not keep duplicates
+				if(steps.size() != stepsSet.size()){	//compare the no. of elements in list and in set, if duplicate entries, the size would not match
 					uncontSq++;
-					break;
 				}
 			}
 		}
@@ -33,23 +27,23 @@ public class CoastGuard2 {
 	public void getInput() {
 		String[] lineVector = null;
 		Scanner in = new Scanner(System.in);
-		System.out.println("Enter comma separated values of rows, columns, no. of boats: ");
+		System.out.println("Enter comma separated values of rows, columns, no. of steps: ");
 		lineVector = in.nextLine().split(",");
 		try {
-			M = Integer.parseInt(lineVector[0]);
-			N = Integer.parseInt(lineVector[1]);
-			k = Integer.parseInt(lineVector[2]);
-			grids = M*N;
+			rows = Integer.parseInt(lineVector[0]);
+			columns = Integer.parseInt(lineVector[1]);
+			noOfBoats = Integer.parseInt(lineVector[2]);
+			grids = rows*columns;
 			checkInput();
-			positions = new int[k][2];
-			System.out.println("Enter comma separated values of position of boats line by line: ");
-			for(int i = 0; i < k; i++) {
+			boats = new int[noOfBoats][2];
+			System.out.println("Enter comma separated values of position of steps line by line: ");
+			for(int i = 0; i < noOfBoats; i++) {
 				lineVector = in.nextLine().split(",");
 				int left = Integer.parseInt(lineVector[0]);
 				int right = Integer.parseInt(lineVector[1]);
 				int[] num = {left, right};
 				checkInput(num, i);
-				positions[i] = num;
+				boats[i] = num;
 			}
 		} catch(Exception e) {
 			exitProgram();
@@ -58,17 +52,17 @@ public class CoastGuard2 {
 	}
 	
 	public void checkInput() {
-		if (M >=50 || M <=0 || N >=50 || N <=0 || k >= 10 || k <=1 || k > grids) {	//no. of boats(k) cannot be greater than total no. of grids
+		if (rows >=50 || rows <=0 || columns >=50 || columns <=0 || noOfBoats >= 10 || noOfBoats <=1 || noOfBoats > grids) {	//no. of steps(noOfBoats) cannot be greater than total no. of grids
 			exitProgram();
 		}
 	}
 	
 	public void checkInput(int[] num, int count) {
-		if (num[0] < 0 || num[0] > N-1 || num[1] < 0 || num[1] > M-1) {
+		if (num[0] < 0 || num[0] > columns-1 || num[1] < 0 || num[1] > rows-1) {
 			exitProgram();
 		}
 		for (int i = 0; i < count; i++) {
-			if(Arrays.equals(num, positions[i])) {	//check whether the position entered has already been entered before 
+			if(Arrays.equals(num, boats[i])) {	//check whether the position entered has already been entered before as two boats cannot be on a single grid
 				exitProgram();
 			}
 		}
@@ -80,7 +74,7 @@ public class CoastGuard2 {
 	}
 	
 	public static void main(String[] args) {
-		CoastGuard2 c = new CoastGuard2();
+		CoastGuard c = new CoastGuard();
 		c.getInput();
 		c.calUncontSq();
 	}
